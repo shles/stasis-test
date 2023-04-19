@@ -36,20 +36,14 @@ class ImportKeyViewModel {
             
             self.encryptedPrivateKeyData = encryptedPrivateKeyData
             
-            guard let privateKeyData = self.cryptoHelper.decryptPrivateKey(encryptedPrivateKey: encryptedPrivateKeyData, password: password) else {
+            guard let privateKeyData = self.cryptoHelper.decryptPrivateKey(encryptedPrivateKey: encryptedPrivateKeyData, password: password),
+                  let publicKeyData = self.cryptoHelper.extractPublicKey(from: privateKeyData) else {
                 let alertData = AlertData(alertTitle: "Decryption Failed", alertMessage: "Unable to decrypt the private key with the provided password.")
                 self.showAlert?(alertData)
                 return
             }
             
             self.decryptedPrivateKey = privateKeyData
-            
-            guard let publicKeyData = self.cryptoHelper.extractPublicKey(from: privateKeyData) else {
-                let alertData = AlertData(alertTitle: "Esctraction Failed", alertMessage: "Unable to extract the public key from the private key.")
-                self.showAlert?(alertData)
-                return
-            }
-            
             self.extractedPublickKey = publicKeyData
             
             guard let _ = self.cryptoHelper.loadKeyPair() else {
